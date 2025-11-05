@@ -24,6 +24,12 @@ var commands = map[string]func(net.Conn, []string){
 	},
 }
 
+/**
+ * HandleCommand handles the command from the client.
+ * @param conn net.Conn 连接
+ * @param cmd string 命令
+ * @param args []string 参数
+ */
 func HandleCommand(conn net.Conn, cmd string, args []string) {
 	f, ok := commands[strings.ToUpper(cmd)]
 	if !ok {

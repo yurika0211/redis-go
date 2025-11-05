@@ -15,10 +15,8 @@ type Server struct {
 }
 
 /**
- * func NewServer(l net.Listener) *Server
- * func (s *Server) Start() error
- * func (s *Server) Stop()
- * func (s *Server) handleConn(conn net.Conn)
+ * 创建一个服务器
+ * @param l net.Listener 监听器
  */
 func NewServer(l net.Listener) *Server {
 	return &Server{
@@ -27,6 +25,10 @@ func NewServer(l net.Listener) *Server {
 	}
 }
 
+/**
+ * 启动服务器
+ * @param server *Server 服务器
+ */
 func (s *Server) Start() error {
 	for {
 		conn, err := s.listener.Accept()
@@ -43,6 +45,10 @@ func (s *Server) Start() error {
 	}
 }
 
+/**
+ * 处理连接
+ * @param conn net.Conn 连接
+ */
 func (s *Server) handleConn(conn net.Conn) {
 	defer conn.Close()
 	reader := bufio.NewReader(conn)
@@ -64,7 +70,8 @@ func (s *Server) handleConn(conn net.Conn) {
 	}
 }
 /**
- * @brief 
+ * @brief 停止服务器
+ * @param server *Server 服务器
  */
 func (s *Server) Stop() {
 	close(s.quit)
