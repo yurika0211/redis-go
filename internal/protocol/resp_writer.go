@@ -15,12 +15,20 @@ func WriteSimpleString(w io.Writer, s string) error {
 	return err
 }
 
-/**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+/**
  * Write a bulk string to the writer
  * @param s string
  * @param w io.Writer
  */
 func WriteBulkString(w io.Writer, s string) error {
 	_, err := w.Write([]byte("$" + fmt.Sprint(len(s)) + "\r\n" + s + "\r\n"))
+	return err
+}
+
+/**
+ * WriteError writes a RESP Error to the writer: -ERR message\r\n
+ */
+func WriteError(w io.Writer, s string) error {
+	_, err := w.Write([]byte("-" + s + "\r\n"))
 	return err
 }
