@@ -76,6 +76,30 @@ var commands = map[string]func(net.Conn, []string){
 		}
 		protocol.WriteBulkString(conn, val)
 	},
+	"SADD": func(conn net.Conn, args []string) {
+		if len(args) < 3 {
+			protocol.WriteError(conn, "ERR wrong number of arguments for 'sadd' command")
+			return
+		}
+		ok := db.GetDB().SADD(args[1], args[2])
+		if !ok {
+			protocol.WriteError(conn, "ERR failed to add member to set")
+			return
+		}
+	}, 
+	"SMEMBERS": func(conn net.Conn, args []string) {
+		if len(args) != 2 {
+			protocol.WriteError(conn, "ERR wrong number of arguments for 'smembers' command")
+			return
+		}
+		members, ok := db.GetDB().SMEMBERS(args[1])
+		if !ok {
+			protocol.WriteError(conn, "ERR failed to get members from set")
+			return
+		}
+		protocol.WriteArray(conn, members)
+	},
+
 }
 
 /**
