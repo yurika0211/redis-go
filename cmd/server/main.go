@@ -1,40 +1,72 @@
 package main
 
 import (
+	"bufio"
+	"io"
 	"log"
 	"net"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"com.ityurika/go-redis-clone/internal/core"
+	"com.ityurika/go-redis-clone/internal/command"
+	"com.ityurika/go-redis-clone/internal/protocol"
 )
 
 func main() {
-	addr := ":6378"
-	listener, err := net.Listen("tcp", addr)
+	addr := ":6379"
+	ln, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatalf("failed to listen on %s: %v", addr, err)
+		log.Fatal(err)
 	}
-	log.Printf("server listening on %s", addr)
+	log.Println("listening on", addr)
 
-	srv := core.NewServer(listener)
+	// 创建信号通道
+	sig := make(chan os.Signal, 1)
+
+	// 捕获 SIGINT / SIGTERM
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
+	// 处理连接
 	go func() {
-		if err := srv.Start(); err != nil {
-			ErrPrint(
-				err,
-			)
+		for {
+			conn, err := ln.Accept()
+			if err != nil {
+				return
+			}
+			go handle(conn)
 		}
 	}()
 
-	conn, err := listener.Accept();
-	if err != nil {
-		ErrPrint(err)
-	}
-	defer conn.Close()
+	// 阻塞等待信号
+	<-sig
 
-	conn.Write([]byte("Hello from server\n"))
+	// 收到信号后优雅关闭
+	log.Println("shutting down...")
+	ln.Close()
 }
 
-func ErrPrint(err error) {
-	if err != nil {
-		log.Printf("error: %v\n", err)
+func handle(conn net.Conn) {
+	defer conn.Close()
+
+	reader := bufio.NewReader(conn)
+
+	for {
+		arr, err := protocol.ParseArray(reader)
+		if err != nil {
+			if err == io.EOF {
+				return
+			}
+			log.Printf("error parsing request: %v", err)
+			return
+		}
+
+		if len(arr) == 0 {
+			// nothing to do
+			continue
+		}
+
+		// Dispatch: arr[0] is command name, pass the full array as args
+		command.HandleCommand(conn, arr[0], arr)
 	}
 }

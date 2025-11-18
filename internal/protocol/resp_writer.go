@@ -15,7 +15,7 @@ func WriteSimpleString(w io.Writer, s string) error {
 	return err
 }
 
-/**
+/**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
  * Write a bulk string to the writer
  * @param s string
  * @param w io.Writer
