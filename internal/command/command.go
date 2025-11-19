@@ -86,6 +86,7 @@ var commands = map[string]func(net.Conn, []string){
 			protocol.WriteError(conn, "ERR failed to add member to set")
 			return
 		}
+		protocol.WriteBulkString(conn, "OK")
 	}, 
 	"SMEMBERS": func(conn net.Conn, args []string) {
 		if len(args) != 2 {
