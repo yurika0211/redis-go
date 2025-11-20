@@ -100,7 +100,31 @@ var commands = map[string]func(net.Conn, []string){
 		}
 		protocol.WriteArray(conn, members)
 	},
-
+	"LPUSH": func(conn net.Conn, args [] string) {
+		if len(args) !=3 {
+			protocol.WriteError(conn, "ERR wrong number of arguments for 'lpush' command")
+			return
+		}
+		val, ok := db.GetDB().LPUSH(args[1], args[2]) 
+		if !ok {
+			protocol.WriteError(conn, "ERR failed to push value to list")
+			return
+		}
+		protocol.WriteArray(conn, val)
+		protocol.WriteSimpleString(conn, "OK")
+	},
+	"LGET": func(conn net.Conn, args []string) {
+		if len(args) != 2 {
+			protocol.WriteError(conn, "ERR wrong number of arguments for 'lget' command")
+			return
+		}
+		val, ok :=db.GetDB().LGET(args[1])
+		if !ok {
+			protocol.WriteError(conn, "ERR failed to get list by index")
+			return
+		}
+		protocol.WriteArray(conn, val)
+	},
 }
 
 /**

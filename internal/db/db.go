@@ -108,7 +108,7 @@ func (kv *DB) HGetField(key string, field string) (string, bool) {
 func (kv *DB) SADD(key string, member string) bool {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
-	
+
 	// if key not present, create new set
 	v, exists := kv.store[key]
 	if !exists {
@@ -143,4 +143,38 @@ func (kv *DB) SMEMBERS(key string) ([]string, bool) {
 	}
 	// Assuming Set has a Members method that returns []string
 	return s.Members(), true
+}
+
+/**
+ * LPUSH adds a value to the list stored at key.
+ * Returns an empty slice and true if added successfully.
+ */
+func (kv *DB) LPUSH(key string, val string) ([]string, bool) {
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
+
+	v, exists := kv.store[key]
+	if !exists {
+		l := data.NewList([]string{})
+		kv.store[key] = l
+		v = l
+	}
+	if l, ok := v.(*data.List); ok {
+		l.Push(val)
+		return l.Values(), true
+	}
+	return nil, false
+}
+
+func (kv *DB) LGET(key string) ([]string, bool) {
+	kv.mu.RLock()
+	defer kv.mu.RUnlock()
+	v, exists := kv.store[key]
+	if !exists {
+		return nil, false
+	}
+	if l, ok := v.(*data.List); ok {
+		return l.Values(), true
+	}
+	return nil, false
 }
