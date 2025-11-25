@@ -3,11 +3,13 @@ package data
 import (
 	"fmt"
 	"strings"
+
 )
 
 type Set struct {
 	members map[string]struct{}
 }
+
 
 /**
  * NewSet creates a new Set.

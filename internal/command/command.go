@@ -125,6 +125,36 @@ var commands = map[string]func(net.Conn, []string){
 		}
 		protocol.WriteArray(conn, val)
 	},
+	"ZADD": func(conn net.Conn, args [] string) {
+		if len(args) < 4 || (len(args)-2)%2 !=0 {
+			protocol.WriteError(conn, "ERR wrong number of arguments for 'zadd' command")
+			return
+		}
+		key := args[1]
+		for i := 2; i < len(args); i += 2 {
+			score := args[i]
+			member := args[i+1]
+			ok := db.GetDB().ZADD(key, score, member)
+			if !ok {
+				protocol.WriteError(conn, "ERR failed to add member to sorted set")
+				return
+			}
+		}
+		protocol.WriteSimpleString(conn, string("OK"))
+	},
+	"ZRANGE": func(conn net.Conn, args[] string) {
+		if len(args) != 4 {
+			protocol.WriteError(conn, "ERR wrong number of arguments for 'zrange' command")
+			return
+		}
+		data, ok := db.GetDB().ZRANGE(args[1], args[2], args[3])
+		if !ok {
+			protocol.WriteError(conn, "ERR failed to get range from sorted set")
+			return
+		}
+		protocol.WriteArray(conn, data)
+		protocol.WriteSimpleString(conn, "OK")
+	},
 }
 
 /**
