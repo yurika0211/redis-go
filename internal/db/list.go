@@ -5,17 +5,17 @@ import (
 )
 
 /**
- * LPUSH adds a value to the list stored at key.
+ * LPUSH adds a value to the list Stored at key.
  * Returns an empty slice and true if added successfully.
  */
 func (kv *DB) LPUSH(key string, val string) ([]string, bool) {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
-	v, exists := kv.store[key]
+	v, exists := kv.Store[key]
 	if !exists {
 		l := data.NewList([]string{})
-		kv.store[key] = l
+		kv.Store[key] = l
 		v = l
 	}
 	if l, ok := v.(*data.List); ok {
@@ -26,13 +26,13 @@ func (kv *DB) LPUSH(key string, val string) ([]string, bool) {
 }
 
 /**
- * LGET returns all values of the list stored at key.
+ * LGET returns all values of the list Stored at key.
  * Returns values and true if found.
  */
 func (kv *DB) LGET(key string) ([]string, bool) {
 	kv.mu.RLock()
 	defer kv.mu.RUnlock()
-	v, exists := kv.store[key]
+	v, exists := kv.Store[key]
 	if !exists {
 		return nil, false
 	}

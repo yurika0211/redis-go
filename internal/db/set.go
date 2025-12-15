@@ -5,7 +5,7 @@ import (
 )
 
 /**
- * SADD adds a member to the set stored at key.
+ * SADD adds a member to the set Stored at key.
  * Returns true if added successfully.
  */
 func (kv *DB) SADD(key string, member string) bool {
@@ -13,10 +13,10 @@ func (kv *DB) SADD(key string, member string) bool {
 	defer kv.mu.Unlock()
 
 	// if key not present, create new set
-	v, exists := kv.store[key]
+	v, exists := kv.Store[key]
 	if !exists {
 		s := data.NewSet(member)
-		kv.store[key] = s
+		kv.Store[key] = s
 		return true
 	}
 	// if present and is set, add member
@@ -30,13 +30,13 @@ func (kv *DB) SADD(key string, member string) bool {
 }
 
 /**
- * SMEMBERS returns all members of the set stored at key.
+ * SMEMBERS returns all members of the set Stored at key.
  * Returns members and true if found.
  */
 func (kv *DB) SMEMBERS(key string) ([]string, bool) {
 	kv.mu.RLock()
 	defer kv.mu.RUnlock()
-	v, exists := kv.store[key]
+	v, exists := kv.Store[key]
 	if !exists {
 		return nil, false
 	}

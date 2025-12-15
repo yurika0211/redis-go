@@ -15,18 +15,18 @@ func (kv *DB) HSet(key string, val string) (string, bool) {
 
 // Deprecated: previous HGet removed. Use HGetField(key, field) instead.
 
-// HSetField sets a field->value in the hash stored at key.
+// HSetField sets a field->value in the hash Stored at key.
 // Returns true if set successfully.
 func (kv *DB) HSetField(key string, field string, val string) bool {
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
 	// if key not present, create new hash
-	v, exists := kv.store[key]
+	v, exists := kv.Store[key]
 	if !exists {
 		h := data.NewHash()
 		h.SetField(field, val)
-		kv.store[key] = h
+		kv.Store[key] = h
 		return true
 	}
 	// if present and is hash, set field
@@ -38,12 +38,12 @@ func (kv *DB) HSetField(key string, field string, val string) bool {
 	return false
 }
 
-// HGetField gets a field value from the hash stored at key.
+// HGetField gets a field value from the hash Stored at key.
 // Returns value and true if found.
 func (kv *DB) HGetField(key string, field string) (string, bool) {
 	kv.mu.RLock()
 	defer kv.mu.RUnlock()
-	v, exists := kv.store[key]
+	v, exists := kv.Store[key]
 	if !exists {
 		return "", false
 	}
