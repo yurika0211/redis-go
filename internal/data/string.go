@@ -19,6 +19,4 @@ func NewStringValue(val string) *StringValue {
 func (s *StringValue) String() string {
 	return fmt.Sprintf("StringValue(%s)", s.Val)
 }	
-
-
-
+ 
