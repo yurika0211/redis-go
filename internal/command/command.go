@@ -3,9 +3,10 @@ package command
 import (
 	"net"
 	"strings"
-
+	"os"
 	"com.ityurika/go-redis-clone/internal/db"
 	"com.ityurika/go-redis-clone/internal/protocol"
+	"com.ityurika/go-redis-clone/internal/persistence"
 )
 
 var commands = map[string]func(net.Conn, []string){
@@ -170,4 +171,22 @@ func HandleCommand(conn net.Conn, cmd string, args []string) {
 		return
 	}
 	f(conn, args)
+}
+
+/**
+ * ExecuteAOF executes the command from AOF.
+ * @param db *db.DB 数据库
+ * @param cmd []string 命令
+ */
+func ExecuteAOF(db *db.DB, cmd [] string) {
+	var aof *persistence.AOF
+	switch strings.ToUpper(cmd[0]) {
+		case "SET":
+			db.SetString(cmd[1], cmd[2])
+			aof.Append(cmd)
+			protocol.WriteSimpleString(os.Stdout, "OK")
+		// case "DEL":
+		// 	db.Del(cmd[1])
+		// 	persistence.Append(cmd)
+	}
 }
