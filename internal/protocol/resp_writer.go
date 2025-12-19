@@ -9,6 +9,7 @@ import (
  * Write a simple string to the writer
  * @param s string
  * @param w io.Writer 写入器
+ * @return error
  */
 func WriteSimpleString(w io.Writer, s string) error {
 	_, err := w.Write([]byte("+" + s + "\r\n"))

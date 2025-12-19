@@ -11,8 +11,18 @@ type AOF struct {
 	writer *bufio.Writer
 }
 
+type CommandExecuter func(cmd string)
+
+var executor CommandExecuter
+
+func RegisterExecutor(f CommandExecuter) {
+	executor = f
+}
+
 /**
  * Open AOF file
+ * @param filename(aof.txt)
+ * @return
  */
 func OpenAOF(filename string) (*AOF, error) {
 	fmt.Println("Opening AOF file")
@@ -28,7 +38,14 @@ func OpenAOF(filename string) (*AOF, error) {
 		filename: f,
 		writer: bufio.NewWriter(f),
 	},nil
+
 }
+
+/**
+ * Append command to AOF file
+ * @param cmd
+ * @return
+ */
 func (aof *AOF) Append(cmd []string) error {
 	fmt.Println("Appending to AOF file")
 	fmt.Fprintf(aof.writer, "*%d\r\n", len(cmd))
@@ -36,6 +53,10 @@ func (aof *AOF) Append(cmd []string) error {
 		fmt.Fprintf(aof.writer, "$%d\r\n", len(arg))
 		fmt.Fprintf(aof.writer, "%s\r\n", arg)
 	}
+	if executor != nil {
+		executor(cmd[0])
+	}
 	return aof.writer.Flush()
 }
+
 

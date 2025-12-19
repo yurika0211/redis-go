@@ -7,6 +7,8 @@ import (
 	"com.ityurika/go-redis-clone/internal/db"
 	"com.ityurika/go-redis-clone/internal/protocol"
 	"com.ityurika/go-redis-clone/internal/persistence"
+	"bufio"
+	"io"
 )
 
 var commands = map[string]func(net.Conn, []string){
@@ -165,6 +167,7 @@ var commands = map[string]func(net.Conn, []string){
  * @param args []string 参数
  */
 func HandleCommand(conn net.Conn, cmd string, args []string) {
+	ExecuteAOF(db.GetDB(), args)
 	f, ok := commands[strings.ToUpper(cmd)]
 	if !ok {
 		protocol.WriteSimpleString(conn, "ERR unknown command '"+cmd+"'")
@@ -178,15 +181,42 @@ func HandleCommand(conn net.Conn, cmd string, args []string) {
  * @param db *db.DB 数据库
  * @param cmd []string 命令
  */
-func ExecuteAOF(db *db.DB, cmd [] string) {
-	var aof *persistence.AOF
-	switch strings.ToUpper(cmd[0]) {
+func ExecuteAOF(db *db.DB, args [] string) {
+	aof, err := persistence.OpenAOF("/media/shiokou/DevRepo/DevHub/Projects/2025-myapp/redis-golang/go-redis-server/log/aof.txt")
+	if err != nil {
+		panic(err)
+	}
+	switch strings.ToUpper(args[0]) {
 		case "SET":
-			db.SetString(cmd[1], cmd[2])
-			aof.Append(cmd)
+			db.SetString(args[1], args[2])
+			aof.Append(args)
 			protocol.WriteSimpleString(os.Stdout, "OK")
 		// case "DEL":
 		// 	db.Del(cmd[1])
 		// 	persistence.Append(cmd)
 	}
+}
+
+/**
+ * Load AOF file
+ */
+func LoadAOF(filename string, conn net.Conn) error {
+	f, err := os.Open(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	reader := bufio.NewReader(f)
+	for {
+		args, err := protocol.ParseArray(reader)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return err
+		}
+		HandleCommand(conn, args[0], args)
+	}
+	return nil
 }

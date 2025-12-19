@@ -89,7 +89,8 @@ func (r *RDB) Load(kv *db.DB) error {
 	if err := binary.Read(f, binary.BigEndian, &n); err != nil {
 		return err
 	}
-	
+
+
 	for i := uint32(0); i < n; i++ {
 		var keyLen uint32
 		if err := binary.Read(f, binary.BigEndian, &keyLen); err != nil {

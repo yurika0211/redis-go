@@ -31,6 +31,8 @@ func main() {
 	go func() {
 		for {
 			conn, err := ln.Accept()
+			command.LoadAOF("/media/shiokou/DevRepo/DevHub/Projects/2025-myapp/redis-golang/go-redis-server/persistence/aof.txt", conn)
+			//每次创建链接的时候都会重新加载aof
 			if err != nil {
 				return
 			}
