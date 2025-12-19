@@ -21,16 +21,32 @@ go-redis-server/
 │   ├── data/                  # 各数据结构实现
 │   │   ├── common.go         
 │   │   └── string.go         
+│   │   └── hash.go       
+│   │   └── list.go 
+│   │   └── set.go
+│   │   └── sortedset.go                    
 │   ├── db/                    # 数据库核心逻辑
 │   │   ├── db.go             
 │   │   └── db_test.go        
+│   │   └── string.go       
+│   │   └── hash.go       
+│   │   └── list.go       
+│   │   └── set.go       
+│   │   └── srotedset.go      
+│   ├── error/
+│   │   └── error.go        
 │   ├── protocol/              
 │   │   ├── resp_parser.go    
 │   │   └── resp_writer.go    
 │   ├── persistence/           # ← 新增目录：持久化逻辑
 │   │   ├── rdb.go            
-│   │   └── aof.go            
+│   │   └── aof.go          
+│   │   └── rdb_test.go
+│   │   └── aof_test.go
 │   └── utils/
+├── log/
+│   └── aof.txt
+│   └── RDB.rdb
 └── README.md                 
 ```
 
