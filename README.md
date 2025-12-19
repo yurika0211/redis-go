@@ -99,6 +99,32 @@ redis-cli -p 6379
 
 ```
 
+## benchmark测试
+
+测试指令
+
+```bash
+# 运行所有 benchmark
+go test -bench=. -benchmem .// -benchtime=10s
+
+# 只运行 SET 相关的 benchmark
+go test -bench=BenchmarkSET -benchmem .// -benchtime=10s
+
+# 指定 CPU 核心数（模拟不同并发环境）
+go test -bench=. -cpu=1,2,4,8 -benchmem .// -benchtime=10s
+
+# 生成 benchmark 统计
+go test -bench=. -benchmem .// -benchtime=10s > bench_result.txt
+```
+
+benchmark结果
+```bash
+BenchmarkSET_Sequential-20      13475690   913.0 ns/op   64 B/op   5 allocs/op
+BenchmarkGET_Sequential-20      14096358   873.0 ns/op   32 B/op   3 allocs/op
+BenchmarkSET_Concurrent-20      70765888   180.1 ns/op   64 B/op   5 allocs/op
+```
+![Benchmark 图](go-redis-server/images/benchmark.png)
+
 💡 未来计划
 
  实现 RDB/AOF 持久化
