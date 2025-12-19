@@ -123,7 +123,8 @@ BenchmarkSET_Sequential-20      13475690   913.0 ns/op   64 B/op   5 allocs/op
 BenchmarkGET_Sequential-20      14096358   873.0 ns/op   32 B/op   3 allocs/op
 BenchmarkSET_Concurrent-20      70765888   180.1 ns/op   64 B/op   5 allocs/op
 ```
-![Benchmark 图](go-redis-server/images/benchmark.png)
+![Benchmark 图](images/benchmark.png)
+
 
 💡 未来计划
 
