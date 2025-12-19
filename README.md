@@ -180,4 +180,7 @@ BenchmarkSET_Concurrent-20      70765888   180.1 ns/op   64 B/op   5 allocs/op
 ```
 ![Benchmark 图](images/benchmark.png)
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
