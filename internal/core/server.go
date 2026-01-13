@@ -30,6 +30,7 @@ func NewServer(l net.Listener) *Server {
 
 /**
  * 启动服务器
+ * @return error 错误
  */
 func (s *Server) Start() error {
 	for {
