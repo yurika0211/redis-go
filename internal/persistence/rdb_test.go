@@ -11,7 +11,7 @@ import (
 // 测试 RDB 的 Save 和 Load 功能
 func TestRDB_SaveLoad(t *testing.T) {
 	// 创建临时文件
-	tmpfile := "test_rdb.rdb"
+	tmpfile := "dump.rdb"
 	defer os.Remove(tmpfile)
 
 	// 初始化数据库
